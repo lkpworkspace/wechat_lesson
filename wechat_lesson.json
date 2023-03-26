@@ -1,0 +1,12 @@
+{
+    "type":"library",
+    "lib":"libwechat_lesson.so",
+    "actor":{
+        "wechat_lesson":[
+            {
+                "instance_name":"wechat_lesson1",
+                "instance_params":""
+            }
+        ]
+    }
+}

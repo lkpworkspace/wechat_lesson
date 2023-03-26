@@ -1,0 +1,64 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+PROJECT(wechat_lesson)
+
+#### compile setting
+SET(CMAKE_C_STANDARD 11)
+SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD_REQUIRED YES)
+SET(CMAKE_C_FLAGS "-fPIC -DPIC -Werror=return-type -Werror=return-local-addr")
+SET(CMAKE_CXX_FLAGS "-fPIC -DPIC -Werror=return-type -Werror=return-local-addr")
+
+#### path setting
+SET(CMAKE_INSTALL_PREFIX "$ENV{HOME}/myframe")
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+SET(MYFRAME_ROOT ${CMAKE_INSTALL_PREFIX})
+SET(MYFRAME_INSTALL_SERVICE_DIR ${MYFRAME_ROOT}/service)
+SET(MYFRAME_INSTALL_LIB_DIR ${MYFRAME_ROOT}/lib)
+
+#### dep 3rd lib
+FIND_PACKAGE(jsoncpp REQUIRED)
+FIND_PACKAGE(gflags REQUIRED)
+FIND_PACKAGE(GTest REQUIRED)
+# proto模块依赖protobuf
+FIND_PACKAGE(Protobuf REQUIRED)
+
+#### include directory
+INCLUDE_DIRECTORIES(${MYFRAME_ROOT}/inc)
+# 包含protobuf头文件目录
+INCLUDE_DIRECTORIES(${Protobuf_INCLUDE_DIRS})
+
+#### lib path
+LINK_LIBRARIES(
+    dl pthread
+    glog gflags jsoncpp
+    # 包含protobuf库
+    ${Protobuf_LIBRARIES}
+    -Wl,-z,defs
+)
+LINK_DIRECTORIES(${MYFRAME_ROOT}/lib)
+
+#### genrate mod lib
+ADD_LIBRARY(${PROJECT_NAME} SHARED
+    ${PROJECT_NAME}.cpp
+)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+    myframe
+    # 添加proto模块依赖
+    myframe_pb
+)
+
+#### install
+INSTALL(TARGETS ${PROJECT_NAME}
+    LIBRARY DESTINATION ${MYFRAME_INSTALL_LIB_DIR}
+    ARCHIVE DESTINATION ${MYFRAME_INSTALL_LIB_DIR}
+    RUNTIME DESTINATION ${MYFRAME_INSTALL_LIB_DIR}
+)
+FILE(GLOB conf_files "*.json")
+INSTALL(FILES 
+    ${conf_files}
+    PERMISSIONS
+    OWNER_READ
+    GROUP_READ
+    WORLD_READ
+    DESTINATION ${MYFRAME_INSTALL_SERVICE_DIR}
+)
