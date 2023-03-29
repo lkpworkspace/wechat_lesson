@@ -21,6 +21,8 @@ FIND_PACKAGE(gflags REQUIRED)
 FIND_PACKAGE(GTest REQUIRED)
 # proto模块依赖protobuf
 FIND_PACKAGE(Protobuf REQUIRED)
+# 解析微信消息
+FIND_PACKAGE(PUGIXML REQUIRED)
 
 #### include directory
 INCLUDE_DIRECTORIES(${MYFRAME_ROOT}/inc)
@@ -33,6 +35,8 @@ LINK_LIBRARIES(
     glog gflags jsoncpp
     # 包含protobuf库
     ${Protobuf_LIBRARIES}
+    # 解析微信消息库
+    pugixml
     -Wl,-z,defs
 )
 LINK_DIRECTORIES(${MYFRAME_ROOT}/lib)

@@ -15,6 +15,7 @@ Author: likepeng <likepeng0418@163.com>
 #include "myframe/worker.h"
 
 #include "http.pb.h"
+#include "wx_msg.h"
 
 class wechat_lessonActor : public myframe::Actor {
  public:
@@ -45,8 +46,17 @@ class wechat_lessonActor : public myframe::Actor {
       ReplyHttp(msg->GetSrc(), 200, resource["params"]["echostr"].asString());
       return;
     }
-    // 回显请求
-    ReplyHttp(msg->GetSrc(), 200, http_req->DebugString());
+    // 解析微信服务器消息并回显
+    WxMsg wxmsg;
+    if (!WxMsgParser::Parse(http_req->body(), &wxmsg)) {
+      ReplyHttp(msg->GetSrc(), 404, "");
+      return;
+    }
+    auto resp_body = WxMsgBuilder::BuildText(
+      wxmsg.Get("ToUserName"),
+      wxmsg.Get("FromUserName"),
+      wxmsg.Get("Content"));
+    ReplyHttp(msg->GetSrc(), 200, resp_body);
   }
 
   void ReplyHttp(const std::string& dst, int code, const std::string& body) {
