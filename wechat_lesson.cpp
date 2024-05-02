@@ -14,12 +14,13 @@ Author: likepeng <likepeng0418@163.com>
 #include "myframe/actor.h"
 #include "myframe/worker.h"
 
-#include "http.pb.h"
+#include "myframe_pb/http.pb.h"
 #include "wx_msg.h"
 
 class wechat_lessonActor : public myframe::Actor {
  public:
   int Init(const char* param) override {
+    Subscribe("actor.wspp_server.wspp_server");
     return 0;
   }
 
@@ -119,7 +120,7 @@ class wechat_lessonActor : public myframe::Actor {
 };
 
 /* 创建actor实例函数 */
-extern "C" std::shared_ptr<myframe::Actor> my_actor_create(
+extern "C" std::shared_ptr<myframe::Actor> actor_create(
     const std::string& actor_name) {
   if (actor_name == "wechat_lesson") {
     return std::make_shared<wechat_lessonActor>();

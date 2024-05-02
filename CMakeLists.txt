@@ -1,15 +1,16 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
-PROJECT(wechat_lesson)
+cmake_minimum_required(VERSION 3.10)
+if (POLICY CMP0091)
+  cmake_policy(SET CMP0091 NEW)
+endif()
+project(wechat_lesson VERSION 1.0.0)
 
 #### compile setting
-SET(CMAKE_C_STANDARD 11)
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_STANDARD_REQUIRED YES)
-SET(CMAKE_C_FLAGS "-fPIC -DPIC -Werror=return-type -Werror=return-local-addr")
-SET(CMAKE_CXX_FLAGS "-fPIC -DPIC -Werror=return-type -Werror=return-local-addr")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
 
 #### path setting
-SET(CMAKE_INSTALL_PREFIX "$ENV{HOME}/myframe")
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 SET(MYFRAME_ROOT ${CMAKE_INSTALL_PREFIX})
 SET(MYFRAME_INSTALL_SERVICE_DIR ${MYFRAME_ROOT}/service)
@@ -26,7 +27,6 @@ FIND_PACKAGE(PUGIXML REQUIRED)
 
 #### include directory
 INCLUDE_DIRECTORIES(${MYFRAME_ROOT}/inc)
-# 包含protobuf头文件目录
 INCLUDE_DIRECTORIES(${Protobuf_INCLUDE_DIRS})
 
 #### lib path
