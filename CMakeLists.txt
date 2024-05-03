@@ -11,43 +11,39 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/source-charset:utf-8>")
 
 #### path setting
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-SET(MYFRAME_ROOT ${CMAKE_INSTALL_PREFIX})
-SET(MYFRAME_INSTALL_SERVICE_DIR ${MYFRAME_ROOT}/service)
-SET(MYFRAME_INSTALL_LIB_DIR ${MYFRAME_ROOT}/lib)
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set(MYFRAME_ROOT ${CMAKE_INSTALL_PREFIX})
+set(MYFRAME_INSTALL_SERVICE_DIR ${MYFRAME_ROOT}/service)
+set(MYFRAME_INSTALL_LIB_DIR ${MYFRAME_ROOT}/lib)
 
 #### dep 3rd lib
-FIND_PACKAGE(jsoncpp REQUIRED)
-FIND_PACKAGE(gflags REQUIRED)
-FIND_PACKAGE(GTest REQUIRED)
-# proto模块依赖protobuf
-FIND_PACKAGE(Protobuf REQUIRED)
-# 解析微信消息
-FIND_PACKAGE(PUGIXML REQUIRED)
+find_package(Threads REQUIRED)
+find_package(jsoncpp REQUIRED)
+find_package(glog REQUIRED)
+find_package(Protobuf REQUIRED)
+find_package(PUGIXML REQUIRED)
 
 #### include directory
-INCLUDE_DIRECTORIES(${MYFRAME_ROOT}/inc)
-INCLUDE_DIRECTORIES(${Protobuf_INCLUDE_DIRS})
+include_directories(${MYFRAME_ROOT}/inc)
+include_directories(${Protobuf_INCLUDE_DIRS})
 
 #### lib path
-LINK_LIBRARIES(
-    dl pthread
-    glog gflags jsoncpp
-    # 包含protobuf库
+link_libraries(
+    Threads::Threads dl
+    JsonCpp::JsonCpp
+    glog::glog
     ${Protobuf_LIBRARIES}
-    # 解析微信消息库
     pugixml
     -Wl,-z,defs
 )
-LINK_DIRECTORIES(${MYFRAME_ROOT}/lib)
+link_directories(${MYFRAME_ROOT}/lib)
 
 #### genrate mod lib
-ADD_LIBRARY(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME} SHARED
     ${PROJECT_NAME}.cpp
 )
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}
     myframe
-    # 添加proto模块依赖
     myframe_pb
 )
 
