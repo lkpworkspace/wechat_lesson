@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 if (POLICY CMP0091)
   cmake_policy(SET CMP0091 NEW)
 endif()
-project(wechat_lesson VERSION 1.0.0)
+project(wechat_lesson VERSION 1.0.2)
 
 #### compile setting
 set(CMAKE_CXX_STANDARD 17)
@@ -18,43 +18,33 @@ set(MYFRAME_INSTALL_LIB_DIR ${MYFRAME_ROOT}/lib)
 
 #### dep 3rd lib
 find_package(Threads REQUIRED)
-find_package(jsoncpp REQUIRED)
-find_package(glog REQUIRED)
 find_package(Protobuf REQUIRED)
 find_package(PUGIXML REQUIRED)
+find_package(myframe REQUIRED)
 
 #### include directory
-include_directories(${MYFRAME_ROOT}/inc)
 include_directories(${Protobuf_INCLUDE_DIRS})
-
-#### lib path
-link_libraries(
-    Threads::Threads dl
-    JsonCpp::JsonCpp
-    glog::glog
-    ${Protobuf_LIBRARIES}
-    pugixml
-    -Wl,-z,defs
-)
-link_directories(${MYFRAME_ROOT}/lib)
 
 #### genrate mod lib
 add_library(${PROJECT_NAME} SHARED
     ${PROJECT_NAME}.cpp
 )
 target_link_libraries(${PROJECT_NAME}
+    Threads::Threads dl
+    ${Protobuf_LIBRARIES}
+    pugixml
     myframe
     myframe_pb
 )
 
 #### install
-INSTALL(TARGETS ${PROJECT_NAME}
+install(TARGETS ${PROJECT_NAME}
     LIBRARY DESTINATION ${MYFRAME_INSTALL_LIB_DIR}
     ARCHIVE DESTINATION ${MYFRAME_INSTALL_LIB_DIR}
     RUNTIME DESTINATION ${MYFRAME_INSTALL_LIB_DIR}
 )
-FILE(GLOB conf_files "*.json")
-INSTALL(FILES 
+file(GLOB conf_files "*.json")
+install(FILES
     ${conf_files}
     PERMISSIONS
     OWNER_READ
